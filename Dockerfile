@@ -1,39 +1,47 @@
-FROM ubuntu:jammy
-LABEL Author="Raja Subramanian" Description="A comprehensive docker image to run Apache-2.4 PHP-8.1 applications like Wordpress, Laravel, etc"
+FROM ubuntu:22.04
+#LABEL Author="Raja Subramanian" Description="A comprehensive docker image to run Apache-2.4 PHP-8.1 applications like Wordpress, Laravel, etc"
 
 
 # Stop dpkg-reconfigure tzdata from prompting for input
-ENV DEBIAN_FRONTEND=noninteractive
+#ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC 
+RUN apt-get update -y && apt-get -y install tzdata
+# Install apache and php8.2
+RUN apt -y update && apt -y upgrade
 
-# Install apache and php7
-RUN apt-get update && \
-    apt-get -y install \
+RUN apt install -y software-properties-common
+
+RUN apt-add-repository ppa:ondrej/php
+
+RUN apt update -y
+
+RUN apt -y install \
         apache2 \
         libapache2-mod-php \
         libapache2-mod-auth-openidc \
-        php-bcmath \
-        php-cli \
-        php-curl \
-        php-gd \
-        php-intl \
-        php-json \
-        php-ldap \
-        php-mbstring \
-        php-memcached \
-        php-mime-type \
-        php-mysql \
-        php-pgsql \
-        php-soap \
-        php-tidy \
-        php-uploadprogress \
-        php-xmlrpc \
-        php-yaml \
-        php-zip \
+        php8.2-bcmath \
+        php8.2-cli \
+        php8.2-curl \
+        php8.2-gd \
+        php8.2-intl \
+        php8.2-ldap \
+	php8.2-pdo \
+        php8.2-mbstring \
+        php8.2-mysql \
+        php8.2-pgsql \
+        php8.2-soap \
+        php8.2-tidy \
+        php8.2-uploadprogress \
+        php8.2-xmlrpc \
+        php8.2-yaml \
+        php8.2-zip \
 # Ensure apache can bind to 80 as non-root
         libcap2-bin && \
     setcap 'cap_net_bind_service=+ep' /usr/sbin/apache2 && \
-    dpkg --purge libcap2-bin && \
-    apt-get -y autoremove && \
+ 
+#    dpkg --purge libcap2-bin &&\
+#    apt-get -y autoremove && \
+
 # As apache is never run as root, change dir ownership
     a2disconf other-vhosts-access-log && \
     chown -Rh www-data. /var/run/apache2 && \
@@ -49,7 +57,7 @@ RUN apt-get update && \
 COPY src/000-default.conf /etc/apache2/sites-available
 COPY src/mpm_prefork.conf /etc/apache2/mods-available
 COPY src/status.conf      /etc/apache2/mods-available
-COPY src/99-local.ini     /etc/php/7.4/apache2/conf.d
+COPY src/99-local.ini     /etc/php/8.2/apache2/conf.d
 
 # Expose details about this docker image
 COPY src/index.php /var/www/html
