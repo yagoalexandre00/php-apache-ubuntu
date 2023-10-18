@@ -1,12 +1,8 @@
 FROM ubuntu:22.04
-#LABEL Author="Raja Subramanian" Description="A comprehensive docker image to run Apache-2.4 PHP-8.1 applications like Wordpress, Laravel, etc"
 
-
-# Stop dpkg-reconfigure tzdata from prompting for input
-#ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC 
 RUN apt-get update -y && apt-get -y install tzdata
-# Install apache and php8.2
+
 RUN apt -y update && apt -y upgrade
 
 RUN apt install -y software-properties-common
@@ -35,23 +31,19 @@ RUN apt -y install \
         php8.2-xmlrpc \
         php8.2-yaml \
         php8.2-zip \
-# Ensure apache can bind to 80 as non-root
         libcap2-bin && \
     setcap 'cap_net_bind_service=+ep' /usr/sbin/apache2 && \
  
-#    dpkg --purge libcap2-bin &&\
-#    apt-get -y autoremove && \
 
-# As apache is never run as root, change dir ownership
     a2disconf other-vhosts-access-log && \
     chown -Rh www-data. /var/run/apache2 && \
-# Install ImageMagick CLI tools
+
     apt-get -y install --no-install-recommends imagemagick && \
-# Clean up apt setup files
+
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-# Setup apache
-    a2enmod rewrite headers expires ext_filter
+    rm -rf /var/lib/apt/lists/*
+
+RUN    a2enmod rewrite headers expires ext_filter
 
 # Override default apache and php config
 COPY src/000-default.conf /etc/apache2/sites-available
@@ -59,8 +51,8 @@ COPY src/mpm_prefork.conf /etc/apache2/mods-available
 COPY src/status.conf      /etc/apache2/mods-available
 COPY src/99-local.ini     /etc/php/8.2/apache2/conf.d
 
-# Expose details about this docker image
 COPY src/index.php /var/www/html
+
 RUN rm -f /var/www/html/index.html && \
     mkdir /var/www/html/.config && \
     tar cf /var/www/html/.config/etc-apache2.tar etc/apache2 && \
@@ -68,6 +60,7 @@ RUN rm -f /var/www/html/index.html && \
     dpkg -l > /var/www/html/.config/dpkg-l.txt
 
 
+WORKDIR /var/www/html
 EXPOSE 80
 USER www-data
 
