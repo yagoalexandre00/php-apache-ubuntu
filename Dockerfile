@@ -11,6 +11,8 @@ RUN apt-add-repository ppa:ondrej/php
 
 RUN apt update -y
 
+RUN useradd -ms /bin/bash ubuntu
+
 RUN apt -y install \
         apache2 \
         libapache2-mod-php \
@@ -33,13 +35,10 @@ RUN apt -y install \
         php8.2-zip \
         libcap2-bin && \
     setcap 'cap_net_bind_service=+ep' /usr/sbin/apache2 && \
- 
-
     a2disconf other-vhosts-access-log && \
-    chown -Rh www-data. /var/run/apache2 && \
-
+    # chown -Rh www-data. /var/run/apache2 && \
+    chown -Rh ubuntu. /var/run/apache2 && \
     apt-get -y install --no-install-recommends imagemagick && \
-
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -60,8 +59,11 @@ RUN rm -f /var/www/html/index.html && \
     dpkg -l > /var/www/html/.config/dpkg-l.txt
 
 
+RUN chown -R ubuntu: /var/www/html
+
 WORKDIR /var/www/html
 EXPOSE 80
-USER www-data
+# USER www-data
+USER ubuntu
 
 ENTRYPOINT ["apache2ctl", "-D", "FOREGROUND"]
