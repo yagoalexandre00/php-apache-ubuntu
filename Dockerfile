@@ -23,7 +23,7 @@ RUN apt -y install \
         php8.2-gd \
         php8.2-intl \
         php8.2-ldap \
-	php8.2-pdo \
+	    php8.2-pdo \
         php8.2-mbstring \
         php8.2-mysql \
         php8.2-pgsql \
@@ -33,8 +33,10 @@ RUN apt -y install \
         php8.2-xmlrpc \
         php8.2-yaml \
         php8.2-zip \
-        libcap2-bin && \
-    setcap 'cap_net_bind_service=+ep' /usr/sbin/apache2 && \
+        libcap2-bin \ 
+        vim
+
+RUN setcap 'cap_net_bind_service=+ep' /usr/sbin/apache2 && \
     a2disconf other-vhosts-access-log && \
     # chown -Rh www-data. /var/run/apache2 && \
     chown -Rh ubuntu. /var/run/apache2 && \
@@ -49,6 +51,7 @@ COPY src/000-default.conf /etc/apache2/sites-available
 COPY src/mpm_prefork.conf /etc/apache2/mods-available
 COPY src/status.conf      /etc/apache2/mods-available
 COPY src/99-local.ini     /etc/php/8.2/apache2/conf.d
+COPY src/php.ini	  /etc/php/8.2/cli/php.ini
 
 COPY src/index.php /var/www/html
 
