@@ -14,7 +14,8 @@ RUN apt update -y
 RUN useradd -ms /bin/bash ubuntu
 
 RUN apt -y install \
-        apache2 \
+        php8.2 \
+	apache2 \
         libapache2-mod-php \
         libapache2-mod-auth-openidc \
         php8.2-bcmath \
@@ -23,8 +24,12 @@ RUN apt -y install \
         php8.2-gd \
         php8.2-intl \
         php8.2-ldap \
-	    php8.2-pdo \
-        php8.2-mbstring \
+        php8.2-pdo \
+        php8.2-pgsql \
+	php8.2-mysqli \
+	php8.2-mysqlnd \
+	php8.2-pdo-mysql \
+	php8.2-mbstring \
         php8.2-mysql \
         php8.2-pgsql \
         php8.2-soap \
