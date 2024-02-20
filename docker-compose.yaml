@@ -1,0 +1,11 @@
+version: '3'
+services:
+  web:
+    container_name: web
+    image: yagoalexandre00/apache-moodle:v1
+    ports:
+      - 80:80
+    restart: 'always'
+    volumes:
+      - ./www:/var/www
+      
