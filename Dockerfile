@@ -34,7 +34,8 @@ RUN apt -y install \
         php8.2-pgsql \
         php8.2-soap \
         php8.2-tidy \
-        php8.2-uploadprogress \
+        php8.2-xml \
+	php8.2-uploadprogress \
         php8.2-xmlrpc \
         php8.2-yaml \
         php8.2-zip \
